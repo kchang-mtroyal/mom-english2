@@ -31,55 +31,79 @@
     <script type="text/babel">
         const { useState, useEffect, useRef, useMemo } = React;
 
-        // --- 資料庫 (5級制課程內容) ---
+        // --- 資料庫 (完整擴充版) ---
         const levelsData = [
             {
                 level: 1,
                 title: "等級 1：基礎入門",
                 badge: "🌱",
                 badgeName: "新手種子",
-                desc: "掌握時間、數字與天氣",
+                desc: "完整數字、日期與天氣",
                 categories: [
                     {
-                        id: 'l1_basics', title: '數字與問候', words: [
+                        id: 'l1_numbers_basic', title: '數字 1-10', words: [
                             { en: 'One', ipa: 'wʌn', zh: '一', pronunciation: '萬', sentence: 'One apple.' },
                             { en: 'Two', ipa: 'tuː', zh: '二', pronunciation: '兔', sentence: 'Two cats.' },
                             { en: 'Three', ipa: 'θriː', zh: '三', pronunciation: '歲', sentence: 'Three o\'clock.' },
                             { en: 'Four', ipa: 'fɔːr', zh: '四', pronunciation: '佛', sentence: 'Four seasons.' },
                             { en: 'Five', ipa: 'faɪv', zh: '五', pronunciation: '法夫', sentence: 'High five!' },
+                            { en: 'Six', ipa: 'sɪks', zh: '六', pronunciation: '希克斯', sentence: 'Six eggs.' },
+                            { en: 'Seven', ipa: 'ˈsɛvn', zh: '七', pronunciation: '塞-分', sentence: 'Seven days a week.' },
+                            { en: 'Eight', ipa: 'eɪt', zh: '八', pronunciation: '欸-特', sentence: 'Eight o\'clock.' },
+                            { en: 'Nine', ipa: 'naɪn', zh: '九', pronunciation: '奈', sentence: 'Nine lives.' },
                             { en: 'Ten', ipa: 'tɛn', zh: '十', pronunciation: '天', sentence: 'Count to ten.' },
-                            { en: 'Hello', ipa: 'həˈloʊ', zh: '你好', pronunciation: '哈-囉', sentence: 'Hello, my friend.' },
-                            { en: 'Thank you', ipa: 'θæŋk juː', zh: '謝謝', pronunciation: '三-Q', sentence: 'Thank you very much.' },
                         ]
                     },
                     {
-                        id: 'l1_time', title: '時間與星期', words: [
-                            { en: 'Monday', ipa: 'ˈmʌndeɪ', zh: '星期一', pronunciation: '曼-day', sentence: 'Today is Monday.' },
+                        id: 'l1_numbers_adv', title: '數字 11-100', words: [
+                            { en: 'Eleven', ipa: 'ɪˈlɛvn', zh: '十一', pronunciation: '一-累-分', sentence: 'Eleven players.' },
+                            { en: 'Twelve', ipa: 'twɛlv', zh: '十二', pronunciation: '拖-爾-夫', sentence: 'Twelve months.' },
+                            { en: 'Twenty', ipa: 'ˈtwɛnti', zh: '二十', pronunciation: '團-踢', sentence: 'Twenty dollars.' },
+                            { en: 'Thirty', ipa: 'ˈθɜːrti', zh: '三十', pronunciation: '瑟-踢', sentence: 'Thirty days.' },
+                            { en: 'Fifty', ipa: 'ˈfɪfti', zh: '五十', pronunciation: '飛夫-踢', sentence: 'Fifty percent.' },
+                            { en: 'Hundred', ipa: 'ˈhʌndrəd', zh: '百', pronunciation: '杭-爵-得', sentence: 'One hundred.' },
+                        ]
+                    },
+                    {
+                        id: 'l1_week', title: '一星期七天', words: [
+                            { en: 'Monday', ipa: 'ˈmʌndeɪ', zh: '星期一', pronunciation: '曼-day', sentence: 'Blue Monday.' },
+                            { en: 'Tuesday', ipa: 'ˈtjuːzdeɪ', zh: '星期二', pronunciation: '吐-死-day', sentence: 'See you Tuesday.' },
+                            { en: 'Wednesday', ipa: 'ˈwɛnzdeɪ', zh: '星期三', pronunciation: '溫-死-day', sentence: 'Wednesday meeting.' },
+                            { en: 'Thursday', ipa: 'ˈθɜːrzdeɪ', zh: '星期四', pronunciation: '瑟-死-day', sentence: 'Throwback Thursday.' },
+                            { en: 'Friday', ipa: 'ˈfraɪdeɪ', zh: '星期五', pronunciation: '福來-day', sentence: 'Happy Friday!' },
+                            { en: 'Saturday', ipa: 'ˈsætərdeɪ', zh: '星期六', pronunciation: '塞-特-day', sentence: 'Saturday night.' },
                             { en: 'Sunday', ipa: 'ˈsʌndeɪ', zh: '星期日', pronunciation: '珊-day', sentence: 'Sunday is a holiday.' },
-                            { en: 'Morning', ipa: 'ˈmɔːrnɪŋ', zh: '早上', pronunciation: '摩-寧', sentence: 'Good morning.' },
-                            { en: 'Night', ipa: 'naɪt', zh: '晚上', pronunciation: '奈-特', sentence: 'Good night.' },
-                            { en: 'Today', ipa: 'təˈdeɪ', zh: '今天', pronunciation: '土-day', sentence: 'How are you today?' },
-                            { en: 'Tomorrow', ipa: 'təˈmɔːroʊ', zh: '明天', pronunciation: '土-摩-柔', sentence: 'See you tomorrow.' },
                         ]
                     },
                     {
-                        id: 'l1_months', title: '月份與天氣', words: [
+                        id: 'l1_months_1', title: '一月到六月', words: [
                             { en: 'January', ipa: 'ˈdʒænjuəri', zh: '一月', pronunciation: '間-牛-爾瑞', sentence: 'January is cold.' },
-                            { en: 'May', ipa: 'meɪ', zh: '五月', pronunciation: '梅', sentence: 'May is spring.' },
-                            { en: 'August', ipa: 'ˈɔːɡəst', zh: '八月', pronunciation: '奧-葛-死特', sentence: 'August is hot.' },
-                            { en: 'December', ipa: 'dɪˈsɛmbər', zh: '十二月', pronunciation: '低-森-柏', sentence: 'Christmas is in December.' },
-                            { en: 'Sunny', ipa: 'ˈsʌni', zh: '晴天', pronunciation: '桑-泥', sentence: 'It is sunny today.' },
-                            { en: 'Rainy', ipa: 'ˈreɪni', zh: '雨天', pronunciation: '瑞-泥', sentence: 'It is rainy outside.' },
-                            { en: 'Cold', ipa: 'koʊld', zh: '冷', pronunciation: '寇-得', sentence: 'It is very cold.' },
-                            { en: 'Hot', ipa: 'hɒt', zh: '熱', pronunciation: '哈-特', sentence: 'Be careful, it is hot.' },
+                            { en: 'February', ipa: 'ˈfɛbruəri', zh: '二月', pronunciation: '飛-布魯-爾瑞', sentence: 'Valentine in February.' },
+                            { en: 'March', ipa: 'mɑːrtʃ', zh: '三月', pronunciation: '罵-去', sentence: 'March spring.' },
+                            { en: 'April', ipa: 'ˈeɪprəl', zh: '四月', pronunciation: '欸-普柔', sentence: 'April fools.' },
+                            { en: 'May', ipa: 'meɪ', zh: '五月', pronunciation: '梅', sentence: 'May flower.' },
+                            { en: 'June', ipa: 'dʒuːn', zh: '六月', pronunciation: '朱-恩', sentence: 'June bride.' },
                         ]
                     },
                     {
-                        id: 'l1_big_nums', title: '進階數字', words: [
-                            { en: 'Hundred', ipa: 'ˈhʌndrəd', zh: '百', pronunciation: '杭-爵-得', sentence: 'One hundred dollars.' },
-                            { en: 'Thousand', ipa: 'ˈθaʊzənd', zh: '千', pronunciation: '騷-忍-得', sentence: 'One thousand years.' },
-                            { en: '263', ipa: 'tuː hʌndrəd sɪksti θriː', zh: '263', pronunciation: '兔-杭-爵-六-踢-歲', sentence: 'Room 263.' },
-                            { en: '21,345', ipa: 'twɛnti wʌn θaʊzənd...', zh: '21,345', pronunciation: '...', sentence: 'That is a big number.' },
+                        id: 'l1_months_2', title: '七月到十二月', words: [
+                            { en: 'July', ipa: 'dʒuˈlaɪ', zh: '七月', pronunciation: '朱-來', sentence: 'July summer.' },
+                            { en: 'August', ipa: 'ˈɔːɡəst', zh: '八月', pronunciation: '奧-葛-死特', sentence: 'August heat.' },
+                            { en: 'September', ipa: 'sɛpˈtɛmbər', zh: '九月', pronunciation: '色普-天-伯', sentence: 'September school.' },
+                            { en: 'October', ipa: 'ɒkˈtoʊbər', zh: '十月', pronunciation: '奧-克-偷-伯', sentence: 'October pumpkin.' },
+                            { en: 'November', ipa: 'noʊˈvɛmbər', zh: '十一月', pronunciation: '諾-芬-伯', sentence: 'November rain.' },
+                            { en: 'December', ipa: 'dɪˈsɛmbər', zh: '十二月', pronunciation: '低-森-柏', sentence: 'December Christmas.' },
+                        ]
+                    },
+                    {
+                        id: 'l1_weather', title: '天氣與問候', words: [
+                            { en: 'Sunny', ipa: 'ˈsʌni', zh: '晴天', pronunciation: '桑-泥', sentence: 'It is sunny.' },
+                            { en: 'Rainy', ipa: 'ˈreɪni', zh: '雨天', pronunciation: '瑞-泥', sentence: 'It is rainy.' },
+                            { en: 'Cloudy', ipa: 'ˈklaʊdi', zh: '多雲', pronunciation: '克勞-底', sentence: 'It is cloudy.' },
+                            { en: 'Windy', ipa: 'ˈwɪndi', zh: '颳風', pronunciation: '溫-底', sentence: 'It is windy.' },
+                            { en: 'Hello', ipa: 'həˈloʊ', zh: '你好', pronunciation: '哈-囉', sentence: 'Hello there.' },
+                            { en: 'Thank you', ipa: 'θæŋk juː', zh: '謝謝', pronunciation: '三-Q', sentence: 'Thank you.' },
+                            { en: 'Goodbye', ipa: 'ɡʊdˈbaɪ', zh: '再見', pronunciation: '古-得-拜', sentence: 'Goodbye, see you.' },
                         ]
                     }
                 ]
@@ -93,30 +117,37 @@
                 categories: [
                     {
                         id: 'l2_family', title: '家庭成員', words: [
-                            { en: 'Father', ipa: 'ˈfɑːðər', zh: '父親', pronunciation: '法-得', sentence: 'My father is tall.' },
-                            { en: 'Mother', ipa: 'ˈmʌðər', zh: '母親', pronunciation: '媽-得', sentence: 'I love my mother.' },
-                            { en: 'Son', ipa: 'sʌn', zh: '兒子', pronunciation: '桑', sentence: 'He is my son.' },
-                            { en: 'Daughter', ipa: 'ˈdɔːtər', zh: '女兒', pronunciation: '多-特', sentence: 'She is my daughter.' },
-                            { en: 'Grandma', ipa: 'ˈɡrænmɑː', zh: '奶奶/外婆', pronunciation: '葛瑞-媽', sentence: 'Grandma is cooking.' },
-                            { en: 'Friend', ipa: 'frɛnd', zh: '朋友', pronunciation: '夫瑞-恩-得', sentence: 'He is my best friend.' },
+                            { en: 'Father', ipa: 'ˈfɑːðər', zh: '父親/爸爸', pronunciation: '法-得', sentence: 'My father is tall.' },
+                            { en: 'Mother', ipa: 'ˈmʌðər', zh: '母親/媽媽', pronunciation: '媽-得', sentence: 'I love my mother.' },
+                            { en: 'Grandpa', ipa: 'ˈɡrænpɑː', zh: '爺爺/外公', pronunciation: '葛瑞-帕', sentence: 'Grandpa is old.' },
+                            { en: 'Grandma', ipa: 'ˈɡrænmɑː', zh: '奶奶/外婆', pronunciation: '葛瑞-媽', sentence: 'Grandma is kind.' },
+                            { en: 'Brother', ipa: 'ˈbrʌðər', zh: '兄弟', pronunciation: '布拉-得', sentence: 'He is my brother.' },
+                            { en: 'Sister', ipa: 'ˈsɪstər', zh: '姊妹', pronunciation: '希-死-特', sentence: 'She is my sister.' },
+                            { en: 'Son', ipa: 'sʌn', zh: '兒子', pronunciation: '桑', sentence: 'My son.' },
+                            { en: 'Daughter', ipa: 'ˈdɔːtər', zh: '女兒', pronunciation: '多-特', sentence: 'My daughter.' },
                         ]
                     },
                     {
                         id: 'l2_body', title: '身體部位', words: [
                             { en: 'Head', ipa: 'hɛd', zh: '頭', pronunciation: '黑-得', sentence: 'Nod your head.' },
-                            { en: 'Hand', ipa: 'hænd', zh: '手', pronunciation: '漢-得', sentence: 'Wash your hands.' },
-                            { en: 'Foot', ipa: 'fʊt', zh: '腳', pronunciation: '富-特', sentence: 'My foot hurts.' },
-                            { en: 'Eye', ipa: 'aɪ', zh: '眼睛', pronunciation: '愛', sentence: 'Close your eyes.' },
+                            { en: 'Hair', ipa: 'hɛr', zh: '頭髮', pronunciation: '黑-爾', sentence: 'Black hair.' },
+                            { en: 'Eye', ipa: 'aɪ', zh: '眼睛', pronunciation: '愛', sentence: 'Big eyes.' },
+                            { en: 'Nose', ipa: 'noʊz', zh: '鼻子', pronunciation: '諾-死', sentence: 'Touch your nose.' },
                             { en: 'Mouth', ipa: 'maʊθ', zh: '嘴巴', pronunciation: '茂-思', sentence: 'Open your mouth.' },
+                            { en: 'Hand', ipa: 'hænd', zh: '手', pronunciation: '漢-得', sentence: 'Wash hands.' },
+                            { en: 'Foot', ipa: 'fʊt', zh: '腳', pronunciation: '富-特', sentence: 'Left foot.' },
                         ]
                     },
                     {
-                        id: 'l2_colors', title: '顏色', words: [
-                            { en: 'Red', ipa: 'rɛd', zh: '紅色', pronunciation: '瑞-得', sentence: 'A red apple.' },
-                            { en: 'Blue', ipa: 'bluː', zh: '藍色', pronunciation: '布魯', sentence: 'The sky is blue.' },
-                            { en: 'Green', ipa: 'ɡriːn', zh: '綠色', pronunciation: '葛瑞-恩', sentence: 'Green tea.' },
+                        id: 'l2_colors', title: '豐富色彩', words: [
+                            { en: 'Red', ipa: 'rɛd', zh: '紅色', pronunciation: '瑞-得', sentence: 'Red apple.' },
+                            { en: 'Blue', ipa: 'bluː', zh: '藍色', pronunciation: '布魯', sentence: 'Blue sky.' },
+                            { en: 'Green', ipa: 'ɡriːn', zh: '綠色', pronunciation: '葛瑞-恩', sentence: 'Green grass.' },
+                            { en: 'Yellow', ipa: 'ˈjɛloʊ', zh: '黃色', pronunciation: '葉-樓', sentence: 'Yellow banana.' },
+                            { en: 'Orange', ipa: 'ˈɔːrɪndʒ', zh: '橘色', pronunciation: '歐-瑞-吉', sentence: 'Orange fruit.' },
+                            { en: 'Purple', ipa: 'ˈpɜːrpl', zh: '紫色', pronunciation: '波-剖', sentence: 'Purple grape.' },
+                            { en: 'Black', ipa: 'blæk', zh: '黑色', pronunciation: '布萊-克', sentence: 'Black car.' },
                             { en: 'White', ipa: 'waɪt', zh: '白色', pronunciation: '壞-特', sentence: 'White snow.' },
-                            { en: 'Black', ipa: 'blæk', zh: '黑色', pronunciation: '布萊-克', sentence: 'Black coffee.' },
                         ]
                     }
                 ]
@@ -129,31 +160,34 @@
                 desc: "食物、居家與動作 (目標180字)",
                 categories: [
                     {
-                        id: 'l3_food', title: '食物與水果', words: [
-                            { en: 'Water', ipa: 'ˈwɔːtər', zh: '水', pronunciation: '沃-特', sentence: 'Drink some water.' },
-                            { en: 'Rice', ipa: 'raɪs', zh: '米飯', pronunciation: '瑞-死', sentence: 'I eat rice.' },
-                            { en: 'Noodles', ipa: 'ˈnuːdlz', zh: '麵', pronunciation: '怒-豆-死', sentence: 'Beef noodles.' },
-                            { en: 'Apple', ipa: 'ˈæpl', zh: '蘋果', pronunciation: '愛-剖', sentence: 'An apple a day.' },
-                            { en: 'Banana', ipa: 'bəˈnænə', zh: '香蕉', pronunciation: '巴-那-那', sentence: 'Yellow banana.' },
+                        id: 'l3_food', title: '食物與飲料', words: [
+                            { en: 'Water', ipa: 'ˈwɔːtər', zh: '水', pronunciation: '沃-特', sentence: 'Drink water.' },
                             { en: 'Tea', ipa: 'tiː', zh: '茶', pronunciation: '踢', sentence: 'Hot tea.' },
+                            { en: 'Coffee', ipa: 'ˈkɔːfi', zh: '咖啡', pronunciation: '咖-飛', sentence: 'Black coffee.' },
+                            { en: 'Milk', ipa: 'mɪlk', zh: '牛奶', pronunciation: '米-歐-克', sentence: 'Fresh milk.' },
+                            { en: 'Bread', ipa: 'brɛd', zh: '麵包', pronunciation: '布瑞-得', sentence: 'Eat bread.' },
+                            { en: 'Rice', ipa: 'raɪs', zh: '飯', pronunciation: '瑞-死', sentence: 'White rice.' },
+                            { en: 'Noodle', ipa: 'ˈnuːdl', zh: '麵', pronunciation: '怒-豆', sentence: 'Beef noodle.' },
+                            { en: 'Egg', ipa: 'ɛɡ', zh: '蛋', pronunciation: '欸-格', sentence: 'Fried egg.' },
                         ]
                     },
                     {
-                        id: 'l3_home', title: '居家與物品', words: [
+                        id: 'l3_fruits', title: '水果', words: [
+                            { en: 'Apple', ipa: 'ˈæpl', zh: '蘋果', pronunciation: '愛-剖', sentence: 'Red apple.' },
+                            { en: 'Banana', ipa: 'bəˈnænə', zh: '香蕉', pronunciation: '巴-那-那', sentence: 'Sweet banana.' },
+                            { en: 'Orange', ipa: 'ˈɔːrɪndʒ', zh: '柳橙', pronunciation: '歐-瑞-吉', sentence: 'Juicy orange.' },
+                            { en: 'Grape', ipa: 'ɡreɪp', zh: '葡萄', pronunciation: '葛瑞-普', sentence: 'Purple grape.' },
+                            { en: 'Lemon', ipa: 'ˈlɛmən', zh: '檸檬', pronunciation: '雷-萌', sentence: 'Sour lemon.' },
+                        ]
+                    },
+                    {
+                        id: 'l3_home', title: '居家環境', words: [
+                            { en: 'House', ipa: 'haʊs', zh: '房子', pronunciation: '豪-死', sentence: 'Big house.' },
+                            { en: 'Room', ipa: 'ruːm', zh: '房間', pronunciation: '入-姆', sentence: 'My room.' },
+                            { en: 'Door', ipa: 'dɔːr', zh: '門', pronunciation: '多-爾', sentence: 'Open the door.' },
+                            { en: 'Window', ipa: 'ˈwɪndoʊ', zh: '窗戶', pronunciation: '溫-豆', sentence: 'Close window.' },
                             { en: 'Table', ipa: 'ˈteɪbl', zh: '桌子', pronunciation: '推-剖', sentence: 'On the table.' },
-                            { en: 'Chair', ipa: 'tʃɛr', zh: '椅子', pronunciation: '卻-爾', sentence: 'Sit on the chair.' },
-                            { en: 'Phone', ipa: 'foʊn', zh: '電話/手機', pronunciation: '鳳', sentence: 'Where is my phone?' },
-                            { en: 'Key', ipa: 'kiː', zh: '鑰匙', pronunciation: 'Ki', sentence: 'Car keys.' },
-                            { en: 'Bag', ipa: 'bæɡ', zh: '包包', pronunciation: '拜-格', sentence: 'My bag is heavy.' },
-                        ]
-                    },
-                    {
-                        id: 'l3_verbs', title: '常用動作', words: [
-                            { en: 'Eat', ipa: 'iːt', zh: '吃', pronunciation: '一-特', sentence: 'Eat dinner.' },
-                            { en: 'Drink', ipa: 'drɪŋk', zh: '喝', pronunciation: '均-克', sentence: 'Drink water.' },
-                            { en: 'Sleep', ipa: 'sliːp', zh: '睡覺', pronunciation: '死-力-普', sentence: 'Go to sleep.' },
-                            { en: 'Walk', ipa: 'wɔːk', zh: '走路', pronunciation: '沃-克', sentence: 'Walk in the park.' },
-                            { en: 'Go', ipa: 'ɡoʊ', zh: '去', pronunciation: '夠', sentence: 'Let\'s go.' },
+                            { en: 'Bed', ipa: 'bɛd', zh: '床', pronunciation: '貝-得', sentence: 'Go to bed.' },
                         ]
                     }
                 ]
@@ -166,22 +200,27 @@
                 desc: "交通、場所與感覺 (目標240字)",
                 categories: [
                     {
-                        id: 'l4_places', title: '場所與交通', words: [
-                            { en: 'Toilet', ipa: 'ˈtɔɪlɪt', zh: '廁所', pronunciation: '偷-一-勒-特', sentence: 'Where is the toilet?' },
-                            { en: 'Hospital', ipa: 'ˈhɒspɪtl', zh: '醫院', pronunciation: '哈-死-皮-偷', sentence: 'Go to the hospital.' },
-                            { en: 'Park', ipa: 'pɑːrk', zh: '公園', pronunciation: '帕-克', sentence: 'Let\'s walk in the park.' },
-                            { en: 'Bus', ipa: 'bʌs', zh: '公車', pronunciation: '巴-死', sentence: 'Take the bus.' },
-                            { en: 'Train', ipa: 'treɪn', zh: '火車', pronunciation: '吹-恩', sentence: 'Train station.' },
-                            { en: 'Home', ipa: 'hoʊm', zh: '家', pronunciation: '轟', sentence: 'Go home.' },
+                        id: 'l4_verbs', title: '常用動作', words: [
+                            { en: 'Eat', ipa: 'iːt', zh: '吃', pronunciation: '一-特', sentence: 'Eat breakfast.' },
+                            { en: 'Drink', ipa: 'drɪŋk', zh: '喝', pronunciation: '均-克', sentence: 'Drink tea.' },
+                            { en: 'Sleep', ipa: 'sliːp', zh: '睡覺', pronunciation: '死-力-普', sentence: 'Sleep well.' },
+                            { en: 'Go', ipa: 'ɡoʊ', zh: '去', pronunciation: '夠', sentence: 'Go home.' },
+                            { en: 'Come', ipa: 'kʌm', zh: '來', pronunciation: '康', sentence: 'Come here.' },
+                            { en: 'Walk', ipa: 'wɔːk', zh: '走路', pronunciation: '沃-克', sentence: 'Walk slow.' },
+                            { en: 'Run', ipa: 'rʌn', zh: '跑', pronunciation: '讓', sentence: 'Run fast.' },
+                            { en: 'See', ipa: 'siː', zh: '看/看見', pronunciation: '係', sentence: 'I see you.' },
                         ]
                     },
                     {
-                        id: 'l4_feelings', title: '感覺與狀態', words: [
-                            { en: 'Happy', ipa: 'ˈhæpi', zh: '快樂', pronunciation: '黑-皮', sentence: 'I am so happy.' },
-                            { en: 'Hungry', ipa: 'ˈhʌŋɡri', zh: '餓', pronunciation: '夯-葛瑞', sentence: 'Are you hungry?' },
-                            { en: 'Tired', ipa: 'ˈtaɪərd', zh: '累', pronunciation: '太-爾-得', sentence: 'I am tired.' },
-                            { en: 'Good', ipa: 'ɡʊd', zh: '好', pronunciation: '顧-得', sentence: 'Very good!' },
-                            { en: 'Beautiful', ipa: 'ˈbjuːtɪfl', zh: '美麗', pronunciation: '比-尤-提-佛', sentence: 'Beautiful flower.' },
+                        id: 'l4_feelings', title: '感覺與形容', words: [
+                            { en: 'Happy', ipa: 'ˈhæpi', zh: '快樂', pronunciation: '黑-皮', sentence: 'I am happy.' },
+                            { en: 'Sad', ipa: 'sæd', zh: '難過', pronunciation: '塞-得', sentence: 'Don\'t be sad.' },
+                            { en: 'Hungry', ipa: 'ˈhʌŋɡri', zh: '餓', pronunciation: '夯-葛瑞', sentence: 'I am hungry.' },
+                            { en: 'Tired', ipa: 'ˈtaɪərd', zh: '累', pronunciation: '太-爾-得', sentence: 'So tired.' },
+                            { en: 'Good', ipa: 'ɡʊd', zh: '好', pronunciation: '顧-得', sentence: 'Very good.' },
+                            { en: 'Bad', ipa: 'bæd', zh: '壞/不好', pronunciation: '拜-得', sentence: 'Not bad.' },
+                            { en: 'Big', ipa: 'bɪɡ', zh: '大', pronunciation: '畢-格', sentence: 'Big apple.' },
+                            { en: 'Small', ipa: 'smɔːl', zh: '小', pronunciation: '死-莫', sentence: 'Small cat.' },
                         ]
                     }
                 ]
@@ -194,21 +233,32 @@
                 desc: "旅遊、購物與實用句 (目標300字)",
                 categories: [
                     {
-                        id: 'l5_shopping', title: '購物與錢', words: [
-                            { en: 'How much', ipa: 'haʊ mʌtʃ', zh: '多少錢', pronunciation: '豪-麻-去', sentence: 'How much is this?' },
-                            { en: 'Expensive', ipa: 'ɪkˈspɛnsɪv', zh: '貴', pronunciation: '一-可-死-噴-希-夫', sentence: 'Too expensive.' },
-                            { en: 'Cheap', ipa: 'tʃiːp', zh: '便宜', pronunciation: '氣-普', sentence: 'It is cheap.' },
-                            { en: 'Buy', ipa: 'baɪ', zh: '買', pronunciation: '拜', sentence: 'I want to buy this.' },
-                            { en: 'Sale', ipa: 'seɪl', zh: '特價', pronunciation: '塞-歐', sentence: 'On sale.' },
+                        id: 'l5_travel', title: '旅遊與交通', words: [
+                            { en: 'Bus', ipa: 'bʌs', zh: '公車', pronunciation: '巴-死', sentence: 'Bus stop.' },
+                            { en: 'Train', ipa: 'treɪn', zh: '火車', pronunciation: '吹-恩', sentence: 'Train station.' },
+                            { en: 'Taxi', ipa: 'ˈtæksi', zh: '計程車', pronunciation: '太-克-系', sentence: 'Call a taxi.' },
+                            { en: 'Airport', ipa: 'ˈɛrpɔːrt', zh: '機場', pronunciation: '欸-爾-波-特', sentence: 'To the airport.' },
+                            { en: 'Hotel', ipa: 'hoʊˈtɛl', zh: '飯店', pronunciation: '吼-偷', sentence: 'Nice hotel.' },
+                            { en: 'Ticket', ipa: 'ˈtɪkɪt', zh: '票', pronunciation: '踢-克-特', sentence: 'One ticket.' },
+                            { en: 'Map', ipa: 'mæp', zh: '地圖', pronunciation: '梅-普', sentence: 'Look at the map.' },
                         ]
                     },
                     {
-                        id: 'l5_emergency', title: '緊急與請求', words: [
-                            { en: 'Help', ipa: 'hɛlp', zh: '幫忙/救命', pronunciation: '黑-歐-普', sentence: 'Help me please.' },
-                            { en: 'Doctor', ipa: 'ˈdɒktər', zh: '醫生', pronunciation: '達-克-特', sentence: 'Call a doctor.' },
-                            { en: 'Police', ipa: 'pəˈliːs', zh: '警察', pronunciation: '波-麗-死', sentence: 'Call the police.' },
-                            { en: 'Lost', ipa: 'lɔːst', zh: '迷路/遺失', pronunciation: '勞-死-特', sentence: 'I am lost.' },
-                            { en: 'Excuse me', ipa: 'ɪkˈskjuːz miː', zh: '不好意思', pronunciation: '一-可-死-Q-死-密', sentence: 'Excuse me, where is the toilet?' },
+                        id: 'l5_shopping', title: '購物與金錢', words: [
+                            { en: 'Money', ipa: 'ˈmʌni', zh: '錢', pronunciation: '媽-泥', sentence: 'No money.' },
+                            { en: 'Buy', ipa: 'baɪ', zh: '買', pronunciation: '拜', sentence: 'Buy food.' },
+                            { en: 'Expensive', ipa: 'ɪkˈspɛnsɪv', zh: '貴', pronunciation: '一-可-死-噴-希-夫', sentence: 'Too expensive.' },
+                            { en: 'Cheap', ipa: 'tʃiːp', zh: '便宜', pronunciation: '氣-普', sentence: 'Very cheap.' },
+                            { en: 'How much', ipa: 'haʊ mʌtʃ', zh: '多少錢', pronunciation: '豪-麻-去', sentence: 'How much is it?' },
+                        ]
+                    },
+                    {
+                        id: 'l5_emergency', title: '緊急與其他', words: [
+                            { en: 'Help', ipa: 'hɛlp', zh: '幫忙', pronunciation: '黑-歐-普', sentence: 'Help me.' },
+                            { en: 'Toilet', ipa: 'ˈtɔɪlɪt', zh: '廁所', pronunciation: '偷-一-勒-特', sentence: 'Where is the toilet?' },
+                            { en: 'Sorry', ipa: 'ˈsɒri', zh: '對不起', pronunciation: '騷-瑞', sentence: 'I am sorry.' },
+                            { en: 'Yes', ipa: 'jɛs', zh: '是/對', pronunciation: '葉-死', sentence: 'Yes, please.' },
+                            { en: 'No', ipa: 'noʊ', zh: '不', pronunciation: '諾', sentence: 'No, thanks.' },
                         ]
                     }
                 ]
@@ -266,8 +316,7 @@
             const userLevelInfo = useMemo(() => {
                 const masteredCount = Object.values(userProgress).filter(p => p >= 3).length;
                 
-                // 簡單的升級邏輯：學會幾個字就升級
-                // Level 1: 0-20字, Level 2: 21-50, Level 3: 51-100, Level 4: 101-180, Level 5: 180+
+                // 簡單的升級邏輯
                 let currentLevel = 1;
                 if (masteredCount > 180) currentLevel = 5;
                 else if (masteredCount > 100) currentLevel = 4;
@@ -443,7 +492,6 @@
             const startCategory = (category) => {
                 setActiveWords(category.words);
                 setActiveCategory(category);
-                // 這裡已經移除了錯誤的 setCurrentLevelId 呼叫
                 setCurrentIndex(0);
                 setSpeakFeedback(null);
                 setScreen('learn');
@@ -720,6 +768,7 @@
                                         <ul className="list-disc pl-4 mt-1 space-y-1">
                                             <li><strong>iPhone:</strong> 設定 > 輔助使用 > 語音內容 > 下載 Siri/增強版聲音。</li>
                                             <li><strong>Android:</strong> 設定 > 文字轉語音 > 更新 Google 語音服務。</li>
+                                            <li>(注意：iPhone 有時會因為系統限制，隱藏部分 Siri 聲音，但增強版聲音通常會出現)</li>
                                         </ul>
                                     </div>
                                     <div className="p-2 overflow-y-auto flex-1">
@@ -732,7 +781,7 @@
                                                         <div>
                                                             <div className="font-bold text-lg flex items-center">
                                                                 聲音 {idx + 1}
-                                                                {isHighQuality && <span className="ml-2 text-xs bg-orange-100 text-orange-600 px-2 py-0.5 rounded-full border border-orange-200">👍 推薦</span>}
+                                                                {isHighQuality && <span className="ml-2 text-xs bg-orange-100 text-orange-600 px-2 py-0.5 rounded-full border border-orange-200">👍 推薦音質</span>}
                                                             </div>
                                                             <div className="text-xs text-gray-400 truncate w-48">{voice.name}</div>
                                                         </div>
